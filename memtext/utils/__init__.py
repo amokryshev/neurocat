@@ -16,6 +16,6 @@ class ServiceResponse:
         else:
             self.error = error
 
-    def to_json(self): return json.dumps(self, cls=ResponseEncoder)
+    def to_json(self): return json.dumps(self, cls=ResponseEncoder, ensure_ascii=False)
 
 
