@@ -34,9 +34,13 @@ def not_found(error):
 def not_found(error):
     return ServiceResponse(error = {'code': 405, 'message': 'Method Not Allowed!'}).to_json(), 405
 
-if __name__ == '__main__':
+mems = pd.read_csv(config.get("Settings", "mems"), sep='\t', header=0, skip_blank_lines=True, engine="python", encoding='utf8', error_bad_lines=False)
+mems['length'] = mems.apply(lambda row: len(row.quote), axis=1)
+mems['lang'] = mems.apply(lambda row: detect(row.quote), axis=1)
 
-    mems = pd.read_csv(config.get("Settings", "mems"), sep='\t', header=0, skip_blank_lines=True, engine="python", encoding='utf8', error_bad_lines=False)
-    mems['length'] = mems.apply(lambda row: len(row.quote), axis=1)
-    mems['lang'] = mems.apply(lambda row: detect(row.quote), axis=1)
-    app.run(host=config.get("Settings", "host"), port = config.get("Settings", "port"), debug=config.get("Settings", "debug"))
+from werkzeug.contrib.fixers import ProxyFix
+app.debug = False
+app.wsgi_app = ProxyFix(app.wsgi_app)
+
+if __name__ == '__main__':
+    app.run(host=config.get("Settings", "host"), port = config.get("Settings", "port"), debug=True)
