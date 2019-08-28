@@ -1,0 +1,6 @@
+[Settings]
+host = 127.0.0.1
+port = 8080
+mems = mems.csv
+debug = True
+
